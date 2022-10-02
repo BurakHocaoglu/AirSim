@@ -88,6 +88,7 @@ RUN cd /home/ue4 && \
 # Setup AirSim python module from source inside the custom AirSim
 USER root
 RUN cd /home/ue4/AirSim/PythonClient && \
+	pip3 install -r requirements.txt && \
 	python3 setup.py install
 
 
