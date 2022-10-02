@@ -1,0 +1,43 @@
+{
+    "client_addr": "127.0.0.1",
+    "client_port": 41451,
+
+    "output_addr": "127.0.0.1",
+    "output_port": "8554",
+
+    "auth_enabled": false,
+    "username": "airsim",
+    "password": "airsim",
+
+    "airsim_cam": "Cam0",
+    "key": "/airsim-rtsp",
+    "format": "BGR",
+    "width": 1280,
+    "height": 720,
+    "channels": 3,
+    "fps": 30,
+
+    "appsrc_key": "AirSimRtspSrv",
+    "pipeline": "( appsrc name=AirSimRtspSrv ! queue ! videoconvert ! queue ! x264enc ! queue ! rtph264pay name=pay0 pt=96 )",
+
+    "appsrc_enough_data_debug": false,
+    "sim_mode": "Multirotor",
+
+    "field_corner": [-50.0, -50.0],
+    "field_size": [100.0, 100.0],
+
+    "lane_count": 5,
+    "lane_length": 100.0,
+    "lane_thickness" : 1,
+    "local_spacing": 1.0,
+    "global_spacing": 5.0,
+
+    "default_crop_type": "Class'/Game/Megascans/3D_Plants/Basil_vgpochzia/Basil_LOD0_Var1_vgpochzia_1'",
+    "crop_types": [
+        "Class'/Game/Megascans/3D_Plants/Basil_vgpochzia/Basil_LOD0_Var1_vgpochzia_1'",
+        "Class'/Game/Megascans/3D_Plants/Sage_ve3gbfoja/Sage_LOD0_Var1_ve3gbfoja_1'",
+        "Class'/Game/Megascans/3D_Plants/White_Ornamental_Kale_ve3ldcgja/White_Ornamental_Kale_LOD0_Var1_ve3ldcgja_1'",
+        "Class'/Game/Megascans/3D_Plants/Bay_Laurel_umjjbjzja/Bay_Laurel_LOD0_Var1_umjjbjzja_1'",
+        "Class'/Game/Megascans/3D_Plants/Lemon_Balm_umslacdia/Lemon_Balm_LOD0_Var1_umslacdia_1'"
+    ]
+}

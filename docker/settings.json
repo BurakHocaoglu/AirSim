@@ -1,19 +1,92 @@
 {
-  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/main/docs/settings_json.md",
   "SettingsVersion": 1.2,
   "SimMode": "Multirotor",
-  "ClockSpeed": 1.0,
-  "Vehicles": {
-    "SimpleFlight": {
-      "VehicleType": "SimpleFlight",
-      "DefaultVehicleState": "Armed",
-      "EnableCollisionPassthrogh": false,
-      "EnableCollisions": true,
-      "AllowAPIAlways": true,
-      "RC": {
-        "RemoteControlID": 0,
-        "AllowAPIWhenDisconnected": false
+  "PhysicsEngineName": "ExternalPhysicsEngine",
+  "ViewMode": "NoDisplay",
+
+  "LocalHostIp": "127.0.0.1",
+  "ApiServerPort": 41451,
+
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "ImageType": 0,
+        "Width": 1280,
+        "Height": 720,
+        "FOV_Degrees": 90,
+        "AutoExposureSpeed": 100,
+        "AutoExposureBias": 0,
+        "AutoExposureMaxBrightness": 0.64,
+        "AutoExposureMinBrightness": 0.03,
+        "MotionBlurAmount": 0,
+        "TargetGamma": 1.0,
+        "ProjectionMode": "",
+        "OrthoWidth": 5.12
+      },
+      {
+        "ImageType": 5,
+        "Width": 1280,
+        "Height": 720,
+        "FOV_Degrees": 90,
+        "AutoExposureSpeed": 100,
+        "AutoExposureBias": 0,
+        "AutoExposureMaxBrightness": 0.64,
+        "AutoExposureMinBrightness": 0.03,
+        "MotionBlurAmount": 0,
+        "TargetGamma": 1.0,
+        "ProjectionMode": "",
+        "OrthoWidth": 5.12
       }
+    ],
+  "NoiseSettings": [
+      {
+        "Enabled": false,
+        "ImageType": 0,
+
+        "RandContrib": 0.2,
+        "RandSpeed": 100000.0,
+        "RandSize": 500.0,
+        "RandDensity": 2,
+
+        "HorzWaveContrib":0.03,
+        "HorzWaveStrength": 0.08,
+        "HorzWaveVertSize": 1.0,
+        "HorzWaveScreenSize": 1.0,
+
+        "HorzNoiseLinesContrib": 1.0,
+        "HorzNoiseLinesDensityY": 0.01,
+        "HorzNoiseLinesDensityXY": 0.5,
+
+        "HorzDistortionContrib": 1.0,
+        "HorzDistortionStrength": 0.002
+      }
+    ]
+  },
+
+  "OriginGeopoint": {
+    "Latitude": -35.363261,
+    "Longitude": 149.165230,
+    "Altitude": 583
+  },
+ 
+  "Vehicles": {
+    "Carrier": {
+      "VehicleType": "SimpleFlight",
+      "Cameras": {
+        "Cam0": {
+          "X": 0, "Y": 0, "Z": 0.3,
+          "Pitch": -45, "Roll": 0, "Yaw": 0
+        }
+      },
+
+      "DefaultVehicleState": "Armed",
+      "AutoCreate": true,
+
+      "EnableCollisionPassthrogh": true,
+      "EnableCollisions": false,
+
+      "X": 0, "Y": 0, "Z": -0.8,
+      "Pitch": 0, "Roll": 0, "Yaw": 0
     }
   }
 }

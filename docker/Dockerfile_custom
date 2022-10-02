@@ -1,0 +1,33 @@
+FROM adamrehn/ue4-runtime:18.04-cudagl11.4.0-virtualgl
+
+USER root
+
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
+	python3 \
+	python3-pip \
+	sudo \
+	libglu1-mesa-dev \
+	xdg-user-dirs \
+	pulseaudio \
+	x11-xserver-utils
+
+RUN python3 -m pip install --upgrade pip && \
+	pip3 install setuptools wheel numpy==1.19.5 && \
+	pip3 install airsim==1.7.0
+
+RUN adduser --force-badname --disabled-password --gecos '' --shell /bin/bash airsim_user && \
+	echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+	adduser airsim_user sudo && \
+	adduser airsim_user audio && \
+	adduser airsim_user video
+
+USER airsim_user
+WORKDIR /home/airsim_user
+
+RUN mkdir -p /home/airsim_user/Documents/AirSim
+COPY settings.json /home/airsim_user/Documents/AirSim
+COPY rtsp_opts.json /home/airsim_user/Documents/AirSim
+
+RUN sudo chown -R airsim_user /home/airsim_user

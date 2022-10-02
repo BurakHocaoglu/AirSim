@@ -73,5 +73,4 @@ private:
     ASimModeBase* simmode_;
 
     APIPCamera* subwindow_cameras_[AirSimSettings::kSubwindowCount];
-    bool map_changed_;
 };

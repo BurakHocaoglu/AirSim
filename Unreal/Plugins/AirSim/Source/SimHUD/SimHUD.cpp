@@ -22,12 +22,9 @@ void ASimHUD::BeginPlay()
 
     try {
         UAirBlueprintLib::OnBeginPlay();
-        initializeSettings();
         loadLevel();
 
-        // Prevent a MavLink connection being established if changing levels
-        if (map_changed_) return;
-
+        initializeSettings();
         setUnrealEngineSettings();
         createSimMode();
         createMainWidget();
@@ -256,9 +253,11 @@ std::string ASimHUD::getSimModeFromUser()
 
 void ASimHUD::loadLevel()
 {
-    UAirBlueprintLib::RunCommandOnGameThread([&]() { this->map_changed_ = UAirBlueprintLib::loadLevel(this->GetWorld(), FString(AirSimSettings::singleton().level_name.c_str())); }, true);
+    if (AirSimSettings::singleton().level_name != "")
+        UAirBlueprintLib::RunCommandOnGameThread([&]() { UAirBlueprintLib::loadLevel(this->GetWorld(), FString(AirSimSettings::singleton().level_name.c_str())); }, true);
+    else
+        UAirBlueprintLib::RunCommandOnGameThread([&]() { UAirBlueprintLib::loadLevel(this->GetWorld(), FString("Blocks")); }, true);
 }
-
 void ASimHUD::createSimMode()
 {
     std::string simmode_name = AirSimSettings::singleton().simmode_name;
@@ -279,6 +278,10 @@ void ASimHUD::createSimMode()
         simmode_ = this->GetWorld()->SpawnActor<ASimModeComputerVision>(FVector::ZeroVector,
                                                                         FRotator::ZeroRotator,
                                                                         simmode_spawn_params);
+    // else if (simmode_name == AirSimSettings::kSimModeTypeAgro)
+    //     simmode_ = this->GetWorld()->SpawnActor<ASimModeAgro>(FVector::ZeroVector,
+    //                                                          FRotator::ZeroRotator,
+    //                                                          simmode_spawn_params);
     else {
         UAirBlueprintLib::ShowMessage(EAppMsgType::Ok, std::string("SimMode is not valid: ") + simmode_name, "Error");
         UAirBlueprintLib::LogMessageString("SimMode is not valid: ", simmode_name, LogDebugLevel::Failure);
@@ -338,27 +341,33 @@ bool ASimHUD::getSettingsText(std::string& settingsText)
 }
 
 // Attempts to parse the settings file path or the settings text from the command line
-// Looks for the flag "-settings=". If it exists, settingsText will be set to the value.
-// Example (Path): AirSim.exe -settings="C:\path\to\settings.json"
-// Example (Text): AirSim.exe -settings={"foo":"bar"} -> settingsText will be set to {"foo":"bar"}
+// Looks for the flag "--settings". If it exists, settingsText will be set to the value.
+// Example (Path): AirSim.exe --settings "C:\path\to\settings.json"
+// Example (Text): AirSim.exe -s '{"foo" : "bar"}' -> settingsText will be set to {"foo": "bar"}
 // Returns true if the argument is present, false otherwise.
 bool ASimHUD::getSettingsTextFromCommandLine(std::string& settingsText)
 {
-    const TCHAR* commandLineArgs = FCommandLine::Get();
-    FString settingsJsonFString;
 
-    if (FParse::Value(commandLineArgs, TEXT("-settings="), settingsJsonFString, false)) {
-        if (readSettingsTextFromFile(settingsJsonFString, settingsText)) {
+    bool found = false;
+    FString settingsTextFString;
+    const TCHAR* commandLineArgs = FCommandLine::Get();
+
+    if (FParse::Param(commandLineArgs, TEXT("-settings"))) {
+        FString commandLineArgsFString = FString(commandLineArgs);
+        int idx = commandLineArgsFString.Find(TEXT("-settings"));
+        FString settingsJsonFString = commandLineArgsFString.RightChop(idx + 10);
+
+        if (readSettingsTextFromFile(settingsJsonFString.TrimQuotes(), settingsText)) {
             return true;
         }
-        else {
-            UAirBlueprintLib::LogMessageString("Loaded settings from commandline: ", TCHAR_TO_UTF8(*settingsJsonFString), LogDebugLevel::Informational);
-            settingsText = TCHAR_TO_UTF8(*settingsJsonFString);
-            return true;
+
+        if (FParse::QuotedString(*settingsJsonFString, settingsTextFString)) {
+            settingsText = std::string(TCHAR_TO_UTF8(*settingsTextFString));
+            found = true;
         }
     }
 
-    return false;
+    return found;
 }
 
 bool ASimHUD::readSettingsTextFromFile(const FString& settingsFilepath, std::string& settingsText)

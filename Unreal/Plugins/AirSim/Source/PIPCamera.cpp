@@ -36,6 +36,17 @@ APIPCamera::APIPCamera(const FObjectInitializer& ObjectInitializer)
 
     PrimaryActorTick.bCanEverTick = true;
 
+    // image_type_to_pixel_format_map_.Add(0, EPixelFormat::PF_B8G8R8A8);
+    // image_type_to_pixel_format_map_.Add(1, EPixelFormat::PF_DepthStencil); // not used. init_auto_format is called in setupCameraFromSettings()
+    // image_type_to_pixel_format_map_.Add(2, EPixelFormat::PF_DepthStencil); // not used for same reason as above
+    // image_type_to_pixel_format_map_.Add(3, EPixelFormat::PF_DepthStencil); // not used for same reason as above
+    // image_type_to_pixel_format_map_.Add(4, EPixelFormat::PF_DepthStencil); // not used for same reason as above
+    // image_type_to_pixel_format_map_.Add(5, EPixelFormat::PF_B8G8R8A8);
+    // image_type_to_pixel_format_map_.Add(6, EPixelFormat::PF_B8G8R8A8);
+    // image_type_to_pixel_format_map_.Add(7, EPixelFormat::PF_B8G8R8A8);
+    // image_type_to_pixel_format_map_.Add(8, EPixelFormat::PF_B8G8R8A8);
+    // image_type_to_pixel_format_map_.Add(9, EPixelFormat::PF_B8G8R8A8);
+
     image_type_to_pixel_format_map_.Add(Utils::toNumeric(ImageType::Scene), EPixelFormat::PF_B8G8R8A8);
     image_type_to_pixel_format_map_.Add(Utils::toNumeric(ImageType::DepthPlanar), EPixelFormat::PF_DepthStencil); // not used. init_auto_format is called in setupCameraFromSettings()
     image_type_to_pixel_format_map_.Add(Utils::toNumeric(ImageType::DepthPerspective), EPixelFormat::PF_DepthStencil); // not used for same reason as above
@@ -392,15 +403,18 @@ void APIPCamera::setupCameraFromSettings(const APIPCamera::CameraSetting& camera
             switch (Utils::toEnum<ImageType>(image_type)) {
             case ImageType::Scene:
             case ImageType::Infrared:
+                // updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], false, image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform, false);
                 updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], false, pixel_format, capture_setting, ned_transform, false);
                 break;
 
             case ImageType::Segmentation:
             case ImageType::SurfaceNormals:
+                // updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], true, image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform, true);
                 updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], true, pixel_format, capture_setting, ned_transform, true);
                 break;
 
             default:
+                // updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], true, image_type_to_pixel_format_map_[image_type], capture_setting, ned_transform, false);
                 updateCaptureComponentSetting(captures_[image_type], render_targets_[image_type], true, pixel_format, capture_setting, ned_transform, false);
                 break;
             }
@@ -778,6 +792,7 @@ void APIPCamera::copyCameraSettingsToSceneCapture(UCameraComponent* src, USceneC
 {
     if (src && dst) {
         dst->SetWorldLocationAndRotation(src->GetComponentLocation(), src->GetComponentRotation());
+        dst->FOVAngle = src->FieldOfView;
 
         FMinimalViewInfo camera_view_info;
         src->GetCameraView(/*DeltaTime =*/0.0f, camera_view_info);
