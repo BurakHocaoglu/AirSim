@@ -11,7 +11,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-ins
 	rsync \
 	sudo \
 	wget \
-	x11-xserver-utils
+	x11-xserver-utils \
+	git
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
 	python3 \
