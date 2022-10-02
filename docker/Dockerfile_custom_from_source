@@ -29,9 +29,7 @@ RUN python3 -m pip install --upgrade pip && \
 
 
 # Install GStreamer
-RUN apt-get install libgstreamer1.0-dev \
-	libgstreamer-plugins-base1.0-dev \
-	libgstreamer-plugins-bad1.0-dev \
+RUN apt-get install -y libgstreamer1.0-dev \
 	libgstrtspserver-1.0-dev \
 	gstreamer1.0-plugins-base \
 	gstreamer1.0-plugins-good \
@@ -47,14 +45,13 @@ RUN apt-get install libgstreamer1.0-dev \
 
 
 # Add new user "ue4"
-RUN adduser --force-badname --disabled-password --gecos '' --shell /bin/bash ue4 && \
-	echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-	adduser ue4 sudo && \
-	adduser ue4 audio && \
-	adduser ue4 video
+#RUN adduser --force-badname --disabled-password --gecos '' --shell /bin/bash ue4 && \
+#	echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+#	adduser ue4 sudo && \
+#	adduser ue4 audio && \
+#	adduser ue4 video
 
-#RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-#	adduser ue4 sudo 
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && adduser ue4 sudo 
 
 
 # Clone custom AirSim
