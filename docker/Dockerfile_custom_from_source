@@ -29,6 +29,26 @@ RUN python3 -m pip install --upgrade pip && \
 	pip3 install setuptools wheel numpy==1.19.5
 
 
+# Install reqiured packages
+RUN apt-get install -y build-essential \
+	pkg-config \
+	libavcodec-dev \
+	libavformat-dev \
+	libswscale-dev \
+	libv4l-dev \
+	libxvidcore-dev \
+	libx264-dev \
+	libjpeg-dev \
+	libpng-dev \
+	libtiff-dev \
+	gfortran \
+	openexr \
+	libatlas-base-dev \
+	libtbb2 \
+	libtbb-dev \
+	libdc1394-22-dev
+
+
 # Install GStreamer
 RUN apt-get install -y libgstreamer1.0-dev \
 	libgstrtspserver-1.0-dev \
