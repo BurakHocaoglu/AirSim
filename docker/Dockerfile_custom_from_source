@@ -1,0 +1,84 @@
+FROM adamrehn/ue4-runtime:18.04-cudagl11.4.0-virtualgl
+
+
+# CUDA public key issue solution / workaround
+USER root
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+
+
+# Install required packages and tools
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
+	rsync \
+	sudo \
+	wget \
+	x11-xserver-utils
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
+	python3 \
+	python3-pip \
+	sudo \
+	libglu1-mesa-dev \
+	xdg-user-dirs \
+	pulseaudio \
+	x11-xserver-utils
+
+
+# Install Python 3.6(+)
+RUN python3 -m pip install --upgrade pip && \
+	pip3 install setuptools wheel numpy==1.19.5
+
+
+# Install GStreamer
+RUN apt-get install libgstreamer1.0-dev \
+	libgstreamer-plugins-base1.0-dev \
+	libgstreamer-plugins-bad1.0-dev \
+	libgstrtspserver-1.0-dev \
+	gstreamer1.0-plugins-base \
+	gstreamer1.0-plugins-good \
+	gstreamer1.0-plugins-bad \
+	gstreamer1.0-plugins-ugly \
+	gstreamer1.0-libav \
+	gstreamer1.0-tools \
+	gstreamer1.0-x \
+	gstreamer1.0-alsa \
+	gstreamer1.0-gl \
+	gstreamer1.0-pulseaudio \
+	gstreamer1.0-rtsp
+
+
+# Add new user "ue4"
+RUN adduser --force-badname --disabled-password --gecos '' --shell /bin/bash ue4 && \
+	echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+	adduser ue4 sudo && \
+	adduser ue4 audio && \
+	adduser ue4 video
+
+#RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+#	adduser ue4 sudo 
+
+
+# Clone custom AirSim
+USER ue4
+RUN cd /home/ue4 && \
+	git clone https://github.com/BurakHocaoglu/AirSim.git && \
+	cd AirSim && \
+	git checkout agro_vision_v_02 && \
+	./setup.sh && \
+	./build_minimal.sh
+
+
+# Setup AirSim python module from source inside the custom AirSim
+USER root
+RUN cd /home/ue4/AirSim/PythonClient && \
+	python3 setup.py install
+
+
+# Create workspace and copy project related files from host computer
+USER ue4
+WORKDIR /home/ue4
+
+RUN mkdir -p /home/ue4/Documents/AirSim
+COPY settings.json /home/ue4/Documents/AirSim
+COPY rtsp_opts.json /home/ue4/Documents/AirSim
+
+RUN sudo chown -R ue4 /home/ue4
