@@ -101,3 +101,5 @@ COPY settings.json /home/ue4/Documents/AirSim
 COPY rtsp_opts.json /home/ue4/Documents/AirSim
 
 RUN sudo chown -R ue4 /home/ue4
+
+ENTRYPOINT ["/home/ue4/AirSim/build_release/output/bin/RtspStream"]
