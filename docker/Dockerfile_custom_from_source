@@ -95,11 +95,11 @@ RUN cd /home/ue4/AirSim/PythonClient && \
 # Create workspace and copy project related files from host computer
 USER ue4
 WORKDIR /home/ue4
+COPY start_task.sh /home/ue4
 
 RUN mkdir -p /home/ue4/Documents/AirSim
 COPY settings.json /home/ue4/Documents/AirSim
 COPY rtsp_opts.json /home/ue4/Documents/AirSim
-COPY start_task.sh /home/ue4
 
 RUN sudo chown -R ue4 /home/ue4
 
