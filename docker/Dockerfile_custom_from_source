@@ -101,6 +101,7 @@ RUN mkdir -p /home/ue4/Documents/AirSim
 COPY settings.json /home/ue4/Documents/AirSim
 COPY rtsp_opts.json /home/ue4/Documents/AirSim
 
+
 # Start the task
 #RUN sudo chown -R ue4 /home/ue4
-CMD ["/home/ue4/start_task.sh"]
+CMD ./start_task.sh
