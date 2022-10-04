@@ -4,7 +4,7 @@ import time
 import setup_path
 import airsim
 import cv2
-
+import traceback
 import numpy as np
 
 from datetime import datetime
