@@ -70,7 +70,13 @@ if __name__ == "__main__":
 		orient = lambda p, r, y: airsim.to_quaternion(p, 0, y)
 
 	client = airsim.VehicleClient()
-	client.confirmConnection()
+
+	try:
+		client.confirmConnection()
+	except Exception as e:
+		# raise e
+		print(traceback.format_exc())
+		time.sleep(1.)
 
 	pose = client.simGetVehiclePose()
 	pitch_0, roll_0, yaw_0 = airsim.to_eularian_angles(pose.orientation)

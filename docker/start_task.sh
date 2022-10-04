@@ -6,7 +6,7 @@ echo $HOME
 echo $(pwd)
 echo $(ls $HOME/AirSim/build_release/output/bin)
 
-nohup sh -c $HOME/AirSim/build_release/output/bin/RtspStream &
+$HOME/AirSim/build_release/output/bin/RtspStream &
 
 echo "Sleeping 10 seconds..."
 sleep 10

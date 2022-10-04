@@ -5,6 +5,7 @@ import setup_path
 import airsim
 import cv2
 
+import traceback
 import numpy as np
 
 from datetime import datetime
@@ -62,7 +63,13 @@ if __name__ == "__main__":
 		orient = lambda p, r, y: airsim.to_quaternion(p, 0, y)
 
 	client = airsim.VehicleClient()
-	client.confirmConnection()
+
+	try:
+		client.confirmConnection()
+	except Exception as e:
+		# raise e
+		print(traceback.format_exc())
+		time.sleep(1.)
 
 
 	found = client.simSetSegmentationObjectID("Landscape[\w]*", 0, True)
