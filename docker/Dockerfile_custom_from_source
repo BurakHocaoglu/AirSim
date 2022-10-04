@@ -104,4 +104,4 @@ COPY rtsp_opts.json /home/ue4/Documents/AirSim
 
 # Start the task
 #RUN sudo chown -R ue4 /home/ue4
-CMD ./start_task.sh
+CMD ./start_task.sh stream

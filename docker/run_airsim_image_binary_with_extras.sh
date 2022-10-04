@@ -58,10 +58,9 @@ for param in $@; do
     esac
 done
 
-# now, let's mount the user directory which points to the unreal binary (UNREAL_BINARY_PATH)
-# set the environment varible SDL_VIDEODRIVER to SDL_VIDEODRIVER_VALUE
-# and tell the docker container to execute UNREAL_BINARY_COMMAND
-$DOCKER_CMD -it \
+
+# AirSim game container
+$DOCKER_CMD --name airsim-game -dit \
     -v $(pwd)/settings.json:/home/airsim_user/Documents/AirSim/settings.json \
     -v $UNREAL_BINARY_PATH:$UNREAL_BINARY_PATH \
     -e SDL_VIDEODRIVER=$SDL_VIDEODRIVER_VALUE \
@@ -74,4 +73,38 @@ $DOCKER_CMD -it \
     --volume="$XAUTH:$XAUTH" \
     --rm \
     $DOCKER_IMAGE_NAME \
-    /bin/bash -c "$UNREAL_BINARY_COMMAND" 
+    /bin/bash -c "$UNREAL_BINARY_COMMAND"
+
+
+# RTSP streaming container
+$DOCKER_CMD --name airsim-rtsp-stream -it \
+    -v $(pwd)/settings.json:/home/airsim_user/Documents/AirSim/settings.json \
+    -v $UNREAL_BINARY_PATH:$UNREAL_BINARY_PATH \
+    -e SDL_VIDEODRIVER=$SDL_VIDEODRIVER_VALUE \
+    -e SDL_HINT_CUDA_DEVICE='0' \
+    --net=host \
+    --env="DISPLAY=$DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    -env="XAUTHORITY=$XAUTH" \
+    --volume="$XAUTH:$XAUTH" \
+    --rm \
+    $DOCKER_IMAGE_NAME \
+    /bin/bash -c './start_task.sh stream'
+
+
+# AirSim client action container
+$DOCKER_CMD --name airsim-client -dit \
+    -v $(pwd)/settings.json:/home/airsim_user/Documents/AirSim/settings.json \
+    -v $UNREAL_BINARY_PATH:$UNREAL_BINARY_PATH \
+    -e SDL_VIDEODRIVER=$SDL_VIDEODRIVER_VALUE \
+    -e SDL_HINT_CUDA_DEVICE='0' \
+    --net=host \
+    --env="DISPLAY=$DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    -env="XAUTHORITY=$XAUTH" \
+    --volume="$XAUTH:$XAUTH" \
+    --rm \
+    $DOCKER_IMAGE_NAME \
+    /bin/bash -c './start_task.sh action'
