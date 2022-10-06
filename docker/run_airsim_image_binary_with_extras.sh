@@ -61,7 +61,7 @@ done
 
 # AirSim game container
 $DOCKER_CMD --name airsim-game -dit \
-    -v $(pwd)/settings.json:/home/airsim_user/Documents/AirSim/settings.json \
+    -v $(pwd)/settings.json:/home/ue4/Documents/AirSim/settings.json \
     -v $UNREAL_BINARY_PATH:$UNREAL_BINARY_PATH \
     -e SDL_VIDEODRIVER=$SDL_VIDEODRIVER_VALUE \
     -e SDL_HINT_CUDA_DEVICE='0' \
@@ -77,10 +77,10 @@ $DOCKER_CMD --name airsim-game -dit \
 
 
 # RTSP streaming container
-$DOCKER_CMD --name airsim-rtsp-stream -it \
-    -v $(pwd)/settings.json:/home/airsim_user/Documents/AirSim/settings.json \
-    -v $UNREAL_BINARY_PATH:$UNREAL_BINARY_PATH \
-    -e SDL_VIDEODRIVER=$SDL_VIDEODRIVER_VALUE \
+$DOCKER_CMD --name airsim-rtsp-stream -dit \
+    -v $(pwd)/settings.json:/home/ue4/Documents/AirSim/settings.json \
+    -v $(pwd)/rtsp_opts_2.json:/home/ue4/Documents/AirSim/rtsp_opts.json \
+    -e SDL_VIDEODRIVER='' \
     -e SDL_HINT_CUDA_DEVICE='0' \
     --net=host \
     --env="DISPLAY=$DISPLAY" \
@@ -93,11 +93,15 @@ $DOCKER_CMD --name airsim-rtsp-stream -it \
     /bin/bash -c './start_task.sh stream'
 
 
+sleep 10
+
+
 # AirSim client action container
-$DOCKER_CMD --name airsim-client -dit \
+$DOCKER_CMD --name airsim-client -it \
     -v $(pwd)/settings.json:/home/airsim_user/Documents/AirSim/settings.json \
-    -v $UNREAL_BINARY_PATH:$UNREAL_BINARY_PATH \
-    -e SDL_VIDEODRIVER=$SDL_VIDEODRIVER_VALUE \
+    -v $(pwd)/rtsp_opts_2.json:/home/ue4/Documents/AirSim/rtsp_opts.json \
+    -v $(pwd)/sweep_motion_g.py:/home/ue4/AirSim/PythonClient/multirotor/sweep_motion.py \
+    -e SDL_VIDEODRIVER='' \
     -e SDL_HINT_CUDA_DEVICE='0' \
     --net=host \
     --env="DISPLAY=$DISPLAY" \
@@ -108,3 +112,5 @@ $DOCKER_CMD --name airsim-client -dit \
     --rm \
     $DOCKER_IMAGE_NAME \
     /bin/bash -c './start_task.sh action'
+
+echo "Ready!"

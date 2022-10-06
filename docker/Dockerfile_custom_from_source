@@ -1,4 +1,5 @@
-FROM adamrehn/ue4-runtime:18.04-cudagl11.4.0-virtualgl
+# FROM adamrehn/ue4-runtime:18.04-cudagl11.4.0-virtualgl
+FROM adamrehn/ue4-runtime:20.04-cudagl11.4.0-virtualgl
 
 
 # CUDA public key issue solution / workaround

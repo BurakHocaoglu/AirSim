@@ -4,7 +4,7 @@
   "PhysicsEngineName": "ExternalPhysicsEngine",
   "ViewMode": "NoDisplay",
 
-  "LocalHostIp": "127.0.0.1",
+  "LocalHostIp": "192.168.1.47",
   "ApiServerPort": 41451,
 
   "CameraDefaults": {
