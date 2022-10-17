@@ -1,8 +1,8 @@
 {
-    "client_addr": "127.0.0.1",
+    "client_addr": "192.168.1.47",
     "client_port": 41451,
 
-    "output_addr": "127.0.0.1",
+    "output_addr": "192.168.1.47",
     "output_port": "8554",
 
     "auth_enabled": false,
@@ -12,14 +12,42 @@
     "airsim_cam": "Cam0",
     "key": "/airsim-rtsp",
     "format": "BGR",
-    "width": 1280,
-    "height": 720,
+    "width": 640,
+    "height": 480,
     "channels": 3,
-    "fps": 30,
+    "fps": 10,
 
     "appsrc_key": "AirSimRtspSrv",
     "pipeline": "( appsrc name=AirSimRtspSrv ! queue ! videoconvert ! queue ! x264enc ! queue ! rtph264pay name=pay0 pt=96 )",
 
     "appsrc_enough_data_debug": false,
-    "sim_mode": "Multirotor"
+    "sim_mode": "vision",
+
+    "field_corner": [-50.0, -50.0],
+    "field_size": [100.0, 100.0],
+    "sweep_waypoints": [[-50.0, -47.0]],
+    "flight_height": -3.0,
+    "pry": [-30.0, 0.0, 0.0],
+
+    "lane_count": 32,
+    "lane_length": 100,
+    "lane_thickness" : 1,
+    "local_spacing": 3.0,
+    "global_spacing": 5.0,
+    "batch_spawn": false,
+    "fill": true,
+
+    "motion_spacing": 3.0,
+    "motion_resolution": 50,
+    "motion_speed": 1.0,
+    "motion_period": 15.0,
+
+    "default_crop_type": "Class'/Game/Megascans/3D_Plants/Basil_vgpochzia/Basil_LOD0_Var1_vgpochzia_1'",
+    "crop_types": [
+        "Class'/Game/Megascans/3D_Plants/Basil_vgpochzia/Basil_LOD0_Var1_vgpochzia_1'",
+        "Class'/Game/Megascans/3D_Plants/Sage_ve3gbfoja/Sage_LOD0_Var1_ve3gbfoja_1'",
+        "Class'/Game/Megascans/3D_Plants/White_Ornamental_Kale_ve3ldcgja/White_Ornamental_Kale_LOD0_Var1_ve3ldcgja_1'",
+        "Class'/Game/Megascans/3D_Plants/Bay_Laurel_umjjbjzja/Bay_Laurel_LOD0_Var1_umjjbjzja_1'",
+        "Class'/Game/Megascans/3D_Plants/Lemon_Balm_umslacdia/Lemon_Balm_LOD0_Var1_umslacdia_1'"
+    ]
 }

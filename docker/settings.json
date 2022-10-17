@@ -1,7 +1,6 @@
 {
   "SettingsVersion": 1.2,
-  "SimMode": "Multirotor",
-  "PhysicsEngineName": "ExternalPhysicsEngine",
+  "SimMode": "ComputerVision",
   "ViewMode": "NoDisplay",
 
   "LocalHostIp": "192.168.1.47",
@@ -11,22 +10,8 @@
     "CaptureSettings": [
       {
         "ImageType": 0,
-        "Width": 1280,
-        "Height": 720,
-        "FOV_Degrees": 90,
-        "AutoExposureSpeed": 100,
-        "AutoExposureBias": 0,
-        "AutoExposureMaxBrightness": 0.64,
-        "AutoExposureMinBrightness": 0.03,
-        "MotionBlurAmount": 0,
-        "TargetGamma": 1.0,
-        "ProjectionMode": "",
-        "OrthoWidth": 5.12
-      },
-      {
-        "ImageType": 5,
-        "Width": 1280,
-        "Height": 720,
+        "Width": 640,
+        "Height": 480,
         "FOV_Degrees": 90,
         "AutoExposureSpeed": 100,
         "AutoExposureBias": 0,
@@ -60,33 +45,13 @@
         "HorzDistortionContrib": 1.0,
         "HorzDistortionStrength": 0.002
       }
-    ]
+    ],
+  "X": 0.0, "Y": 0.0, "Z": 5.0
   },
 
   "OriginGeopoint": {
     "Latitude": -35.363261,
     "Longitude": 149.165230,
     "Altitude": 583
-  },
- 
-  "Vehicles": {
-    "Carrier": {
-      "VehicleType": "SimpleFlight",
-      "Cameras": {
-        "Cam0": {
-          "X": 0, "Y": 0, "Z": 0.3,
-          "Pitch": -45, "Roll": 0, "Yaw": 0
-        }
-      },
-
-      "DefaultVehicleState": "Armed",
-      "AutoCreate": true,
-
-      "EnableCollisionPassthrogh": true,
-      "EnableCollisions": false,
-
-      "X": 0, "Y": 0, "Z": -0.8,
-      "Pitch": 0, "Roll": 0, "Yaw": 0
-    }
   }
 }

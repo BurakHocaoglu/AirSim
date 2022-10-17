@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+  airsim_game:
+    container_name: airsim_game
+    image: airsim_1_7_0_v13:11.4-devel-ubuntu20.04
+    restart: always
+    environment:
+      UNREAL_BINARY_SHELL_ABSPATH: '/home/ue4/AgroDevelV0_3/LinuxNoEditor/AgroDevelV0_3.sh'
+    command: /bin/bash -c "${UNREAL_BINARY_SHELL_ABSPATH} -RenderOffscreen"
+    volumes:
+      - /home/burakhocaoglu/streaming-workspace/settings.json:/home/ue4/Documents/AirSim/settings.json
+      - /home/burakhocaoglu/AgroDevelV0_3/LinuxNoEditor:/home/ue4/AgroDevelV0_3/LinuxNoEditor/AgroDevelV0_3.sh
+    networks:
+      hostnet: {}
+
+  airsim_rtsp_stream:
+    container_name: airsim_rtsp_stream
+    image: airsim_1_7_0_v13:11.4-devel-ubuntu20.04
+    restart: always
+    command: /bin/bash -c "./start_task.sh stream"
+    volumes:
+      - /home/burakhocaoglu/streaming-workspace/settings.json:/home/ue4/Documents/AirSim/settings.json
+      - /home/burakhocaoglu/streaming-workspace/rtsp_opts.json:/home/ue4/Documents/AirSim/rtsp_opts.json
+      - /home/burakhocaoglu/streaming-workspace/sweep_motion_g.py:/home/ue4/AirSim/PythonClient/multirotor/sweep_motion.py
+    networks:
+      hostnet: {}
+
+  airsim_client:
+    container_name: airsim_client
+    image: airsim_1_7_0_v13:11.4-devel-ubuntu20.04
+    restart: always
+    command: /bin/bash -c "./start_task.sh action"
+    volumes:
+      - /home/burakhocaoglu/streaming-workspace/settings.json:/home/ue4/Documents/AirSim/settings.json
+      - /home/burakhocaoglu/streaming-workspace/rtsp_opts.json:/home/ue4/Documents/AirSim/rtsp_opts.json
+    networks:
+      hostnet: {}
+
+volumes:
+  airsim_game: #...
+  airsim_rtsp_stream: #...
+  airsim_client: #...
+
+networks:
+  hostnet:
+    external: true
+    name: host

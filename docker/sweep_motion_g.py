@@ -1,11 +1,10 @@
 import os
 import sys
 import time
-# import setup_path
-import airsim
 import json
-
+import airsim
 import traceback
+
 import numpy as np
 
 from datetime import datetime
@@ -25,6 +24,10 @@ if __name__ == "__main__":
 	lane_length = content["lane_length"]
 	lane_spacing = content["motion_spacing"]
 	lane_count = content["lane_count"]
+
+	sweep_waypoints = content["sweep_waypoints"]
+	flight_height = content["flight_height"]
+	pry = content["pry"]
 
 	motion_resolution = content["motion_resolution"]
 	motion_speed = content["motion_speed"]
@@ -61,47 +64,70 @@ if __name__ == "__main__":
 		{180.0 * roll_0 / np.pi}, \
 		{180.0 * yaw_0 / np.pi}")
 
-	i = 0
-	is_south = False
-	R = lane_spacing / 2.
-	x_start = pose.position.x_val
-	x_end = x_start + lane_length
-	resolution = int(np.round(motion_resolution * period))
+	pitch_0, roll_0, yaw_0 = [angle * np.pi / 180.0 for angle in pry]
+	quat_0 = orient(pitch_0, roll_0, yaw_0)
+	client.simSetVehiclePose(
+		airsim.Pose(
+			airsim.Vector3r(pose.position.x_val, pose.position.y_val, flight_height), 
+			orient(pitch_0, roll_0, yaw_0)), 
+		False)
+	print(f"t = 0 Rot. (P, R, Y): {180.0 * pitch_0 / np.pi}, \
+		{180.0 * roll_0 / np.pi}, \
+		{180.0 * yaw_0 / np.pi}")
 
-	while i < lane_count:
-		y_i = pose.position.y_val + i * lane_spacing
-		yaw = int(is_south) * np.pi
-		yaw_end = (1 - int(is_south)) * np.pi
+	pass_num = 0
+	while True:
+		pass_index = pass_num  % len(sweep_waypoints)
+		client.simSetVehiclePose(
+			airsim.Pose(
+				airsim.Vector3r(sweep_waypoints[pass_index][0], sweep_waypoints[pass_index][1], flight_height), 
+				quat_0), 
+			False)
 
-		v_x = np.linspace(x_start, x_end, resolution, False)
-		for k_s in range(resolution):
-			client.simSetVehiclePose(airsim.Pose(
-										airsim.Vector3r(v_x[k_s], y_i, pose.position.z_val), 
-										orient(pitch_0, roll_0, yaw)), 
-									 False)
+		i = 0
+		is_south = False
+		R = lane_spacing / 2.
+		x_start = pose.position.x_val
+		x_end = x_start + lane_length
+		resolution = int(np.round(motion_resolution * period))
 
-			time.sleep(delta)
+		while i < lane_count:
+			y_i = pose.position.y_val + i * lane_spacing
+			yaw = int(is_south) * np.pi
+			yaw_end = (1 - int(is_south)) * np.pi
 
-		curve = np.linspace(yaw, yaw_end, 250)
-		local_curve = np.linspace(yaw - np.pi / 2., yaw + np.pi / 2., 250)
-		if is_south:
-			local_curve = np.flip(local_curve)
+			v_x = np.linspace(x_start, x_end, resolution, False)
+			for k_s in range(resolution):
+				client.simSetVehiclePose(airsim.Pose(
+											airsim.Vector3r(v_x[k_s], y_i, flight_height), 
+											orient(pitch_0, roll_0, yaw)), 
+										 False)
 
-		v_c_x = x_end + R * np.cos(local_curve)
-		v_c_y = y_i + R * (1 + np.sin(local_curve))
-		for k_c in range(250):
-			client.simSetVehiclePose(airsim.Pose(
-										airsim.Vector3r(v_c_x[k_c], v_c_y[k_c], pose.position.z_val), 
-										orient(pitch_0, roll_0, curve[k_c])), 
-									 False)
+				time.sleep(delta)
 
-			time.sleep(delta)
+			curve = np.linspace(yaw, yaw_end, 250)
+			local_curve = np.linspace(yaw - np.pi / 2., yaw + np.pi / 2., 250)
+			if is_south:
+				local_curve = np.flip(local_curve)
 
-		is_south = not is_south
-		x_start = x_end
-		x_end = x_start + (- 1) ** int(is_south) * lane_length
+			v_c_x = x_end + R * np.cos(local_curve)
+			v_c_y = y_i + R * (1 + np.sin(local_curve))
+			for k_c in range(250):
+				client.simSetVehiclePose(airsim.Pose(
+											airsim.Vector3r(v_c_x[k_c], v_c_y[k_c], flight_height), 
+											orient(pitch_0, roll_0, curve[k_c])), 
+										 False)
 
-		i += 1
-		print(f"Lane {i} done.")
+				time.sleep(delta)
+
+			is_south = not is_south
+			x_start = x_end
+			x_end = x_start + (- 1) ** int(is_south) * lane_length
+
+			i += 1
+			print(f"Lane {i} done.")
+
+		pass_num += 1
+		print(f"Pass {pass_num} done.")
 
 	client.reset()
